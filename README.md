@@ -116,7 +116,7 @@ Copy and paste these cells into your Colab notebook:
 import os
 
 # Clone YOUR forked repository (replace YOUR_USERNAME)
-!git clone https://github.com/YOUR_USERNAME/production-rag-pipeline.git
+!git clone https://github.com/chris-conifer/production-rag-pipeline.git
 %cd production-rag-pipeline
 
 # Install PyTorch with CUDA
