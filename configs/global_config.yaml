@@ -1,0 +1,74 @@
+# ==============================================================================
+# Global Configuration for All Projects
+# ==============================================================================
+# This file contains shared settings across all 4 projects in the monorepo
+
+global:
+  # Reproducibility
+  random_seed: 42
+  
+  # Dataset
+  dataset_name: "rajpurkar/squad_v2"
+  dataset_version: "2.0"
+  dataset_split: "train"
+  max_samples: 1000  # Limit for faster experimentation, set to null for full dataset
+  validation_split: 0.1  # 10% for validation
+  
+  # Paths (relative to project root)
+  data_dir: "data"
+  raw_data_dir: "data/raw"
+  processed_data_dir: "data/processed"
+  golden_qa_path: "data/golden_qa_dataset.json"
+  mlflow_tracking_uri: "file:./mlflow_tracking"
+  
+  # Hardware constraints (matching Colab free tier)
+  max_gpu_memory_gb: 15
+  max_cpu_memory_gb: 15
+  device: "cuda"  # auto, cuda, cpu, mps
+  
+  # CUDA Configuration for CUDA 12.6
+  cuda_version: "12.6"
+  cuda_device_index: 0  # Use first GPU, change if you have multiple GPUs
+  cuda_deterministic: false  # Set to true for reproducible results (slower)
+  cuda_benchmark: true  # Enable cuDNN benchmark for better performance
+  
+  # Cost tracking (approximate costs per 1K tokens in USD)
+  # These are estimates for tracking purposes
+  embedding_cost_per_1k_tokens: 0.0001
+  llm_cost_per_1k_tokens: 0.002
+  
+  # Logging
+  log_level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  verbose: true
+  
+  # Experiment tracking
+  use_mlflow: true
+  use_langsmith: true
+  
+  # Performance optimization
+  batch_size: 32
+  num_workers: 4
+  use_fp16: true  # Mixed precision for faster inference
+  
+# Model constraints
+model_constraints:
+  max_parameters: 8_000_000_000  # 8B parameters max
+  quantization_enabled: true
+  quantization_bits: 4  # 4-bit quantization for memory efficiency
+  
+# Evaluation settings
+evaluation:
+  golden_qa_size: 100  # Number of QA pairs in golden dataset
+  k_values: [1, 3, 5, 10]  # Different k values for retrieval evaluation
+  
+  # Metrics to compute
+  compute_retrieval_metrics: true
+  compute_generation_metrics: true
+  compute_cost_metrics: true
+  compute_latency_metrics: true
+  
+  # Benchmarking
+  benchmark_iterations: 3  # Number of times to run for latency measurement
+  warmup_iterations: 1  # Warm-up runs before benchmarking
+
+

@@ -1,0 +1,357 @@
+# ==============================================================================
+# Project 1: RAG Pipeline Configuration
+# ==============================================================================
+# Production-ready RAG pipeline with comprehensive evaluation
+
+project_name: "project1_rag"
+description: "Best-in-class production-ready RAG pipeline using SQuAD v2.0"
+version: "1.0.0"
+
+# ==============================================================================
+# Embedding Models to Test
+# ==============================================================================
+# All models are open-source and optimized for edge devices / Colab
+# Models are listed from smallest to largest
+
+embedding_models:
+  # Lightweight models (best for edge devices)
+  - name: "sentence-transformers/all-MiniLM-L6-v2"
+    dimension: 384
+    max_seq_length: 256
+    size_mb: 80
+    notes: "Fastest, smallest model - good baseline"
+    
+  - name: "BAAI/bge-small-en-v1.5"
+    dimension: 384
+    max_seq_length: 512
+    size_mb: 133
+    notes: "High quality, small size - excellent performance/size ratio"
+    
+  - name: "thenlper/gte-small"
+    dimension: 384
+    max_seq_length: 512
+    size_mb: 67
+    notes: "Very efficient, good for semantic search"
+  
+  # Medium models (balanced performance)
+  - name: "sentence-transformers/all-mpnet-base-v2"
+    dimension: 768
+    max_seq_length: 384
+    size_mb: 420
+    notes: "High quality, widely used, good all-around performance"
+    
+  - name: "BAAI/bge-base-en-v1.5"
+    dimension: 768
+    max_seq_length: 512
+    size_mb: 438
+    notes: "State-of-the-art performance for base-sized models"
+
+# ==============================================================================
+# LLM Models for Answer Generation (≤ 8B parameters)
+# ==============================================================================
+
+llm_models:
+  # Small models (fastest)
+  - name: "google/flan-t5-base"
+    parameters: 250_000_000  # 250M
+    max_length: 512
+    temperature: 0.7
+    quantization: null
+    notes: "Fast, efficient, good for quick testing"
+    
+  - name: "google/flan-t5-large"
+    parameters: 780_000_000  # 780M
+    max_length: 512
+    temperature: 0.7
+    quantization: null
+    notes: "Better quality than base, still fast"
+  
+  # Medium models (better quality)
+  - name: "mistralai/Mistral-7B-Instruct-v0.2"
+    parameters: 7_000_000_000  # 7B
+    max_length: 2048
+    temperature: 0.7
+    quantization: "4bit"
+    notes: "Excellent instruction following, needs quantization"
+    
+  - name: "microsoft/phi-2"
+    parameters: 2_700_000_000  # 2.7B
+    max_length: 2048
+    temperature: 0.7
+    quantization: null
+    notes: "Strong reasoning, fits in memory unquantized"
+
+# Default models for baseline
+default_embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
+default_llm_model: "google/flan-t5-base"
+
+# ==============================================================================
+# Document Processing - Chunking Strategies
+# ==============================================================================
+
+chunking:
+  # Strategy 1: Fixed-size chunking
+  fixed_size:
+    enabled: true
+    chunk_sizes: [256, 512, 1024]  # Test different sizes
+    chunk_overlaps: [50, 100, 200]  # Test different overlaps
+    
+  # Strategy 2: Sentence-based chunking
+  sentence_based:
+    enabled: true
+    sentences_per_chunk: [3, 5, 7]
+    overlap_sentences: [1, 2]
+    
+  # Strategy 3: Semantic chunking (experimental)
+  semantic:
+    enabled: false  # Enable for advanced experimentation
+    breakpoint_threshold: [0.5, 0.7, 0.9]
+    buffer_size: 1
+
+# Default chunking for baseline
+default_chunking:
+  strategy: "fixed_size"
+  chunk_size: 512
+  chunk_overlap: 100
+
+# ==============================================================================
+# Vector Stores / Databases
+# ==============================================================================
+
+vector_stores:
+  # FAISS - Fast and efficient
+  - name: "faiss"
+    index_type: "IndexFlatL2"  # Exact search, best quality
+    enabled: true
+    notes: "Exact nearest neighbor search"
+    
+  - name: "faiss"
+    index_type: "IndexIVFFlat"  # Approximate, faster
+    nlist: 100
+    nprobe: 10
+    enabled: true
+    notes: "Approximate search, faster for large datasets"
+    
+  - name: "faiss"
+    index_type: "IndexHNSWFlat"  # Hierarchical NSW
+    M: 32
+    efConstruction: 40
+    efSearch: 16
+    enabled: true
+    notes: "Graph-based, good speed/quality trade-off"
+  
+  # ChromaDB - Easy to use, persistent
+  - name: "chroma"
+    persist_directory: "data/chroma_db"
+    enabled: true
+    notes: "Easy to use, built-in persistence"
+
+# Default vector store
+default_vector_store:
+  name: "faiss"
+  index_type: "IndexFlatL2"
+
+# ==============================================================================
+# Retrieval Configuration
+# ==============================================================================
+
+retrieval:
+  # Number of chunks to retrieve
+  top_k_values: [3, 5, 10, 20]
+  default_top_k: 5
+  
+  # Similarity metrics
+  similarity_metrics:
+    - "cosine"
+    - "euclidean"
+    - "dot_product"
+  default_metric: "cosine"
+  
+  # Retrieval strategies
+  strategies:
+    - name: "dense"  # Standard embedding-based retrieval
+      enabled: true
+    - name: "hybrid"  # Dense + BM25
+      enabled: true
+      bm25_weight: 0.3
+      dense_weight: 0.7
+
+# ==============================================================================
+# Reranking
+# ==============================================================================
+
+reranking:
+  enabled: true
+  
+  models:
+    - name: "cross-encoder/ms-marco-MiniLM-L-6-v2"
+      max_length: 512
+      top_n: 3
+      notes: "Fast, lightweight cross-encoder"
+      
+    - name: "cross-encoder/ms-marco-MiniLM-L-12-v2"
+      max_length: 512
+      top_n: 3
+      notes: "Better quality, slightly slower"
+  
+  default_model: "cross-encoder/ms-marco-MiniLM-L-6-v2"
+  default_top_n: 3
+
+# ==============================================================================
+# Prompt Engineering
+# ==============================================================================
+
+prompts:
+  # Template for RAG
+  rag_template: |
+    Answer the question based on the context below. If the answer cannot be found in the context, say "I cannot answer this question based on the provided context."
+    
+    Context:
+    {context}
+    
+    Question: {question}
+    
+    Answer:
+  
+  # Template with source citation
+  rag_with_sources_template: |
+    Answer the question based on the context below. Cite the source(s) used in your answer. If the answer cannot be found in the context, say "I cannot answer this question based on the provided context."
+    
+    Context:
+    {context}
+    
+    Question: {question}
+    
+    Answer (with source citations):
+
+# ==============================================================================
+# Evaluation Metrics
+# ==============================================================================
+
+evaluation:
+  # Retrieval metrics
+  retrieval_metrics:
+    - "precision_at_k"
+    - "recall_at_k"
+    - "mrr"  # Mean Reciprocal Rank
+    - "ndcg"  # Normalized Discounted Cumulative Gain
+    - "hit_rate"
+    - "map"  # Mean Average Precision
+  
+  # Generation metrics (using RAGAS)
+  ragas_metrics:
+    - "faithfulness"  # Factual consistency
+    - "answer_relevancy"  # Relevance to question
+    - "context_recall"  # How much relevant context retrieved
+    - "context_precision"  # Precision of retrieved context
+    - "context_relevancy"  # Overall context quality
+  
+  # Generation metrics (using DeepEval)
+  deepeval_metrics:
+    - "answer_relevancy"
+    - "faithfulness"
+    - "contextual_relevancy"
+    - "hallucination"  # Detect hallucinations
+    - "bias"  # Detect biases
+  
+  # Performance metrics
+  performance_metrics:
+    - "latency_p50"  # Median latency
+    - "latency_p95"  # 95th percentile
+    - "latency_p99"  # 99th percentile
+    - "throughput"  # Queries per second
+    - "cost_per_query"  # Estimated cost
+    - "memory_usage"  # Peak memory usage
+
+# ==============================================================================
+# Gradio Interface Configuration
+# ==============================================================================
+
+gradio:
+  share: false  # Set to true to create public link
+  server_port: 7860
+  server_name: "0.0.0.0"
+  theme: "soft"
+  title: "SQuAD RAG Q&A System"
+  description: "Production-ready RAG pipeline for question answering"
+  
+  # Interface settings
+  show_sources: true
+  show_confidence: true
+  max_question_length: 500
+  
+  # Examples for demo
+  examples:
+    - "What is the capital of France?"
+    - "Who invented the telephone?"
+    - "When did World War II end?"
+
+# ==============================================================================
+# Optimization Settings
+# ==============================================================================
+
+optimization:
+  # Caching
+  enable_embedding_cache: true
+  cache_dir: "data/cache"
+  
+  # Batch processing
+  batch_encode: true
+  batch_size: 32
+  
+  # Model optimization
+  use_fp16: true
+  compile_model: false  # torch.compile (PyTorch 2.0+)
+  
+  # Multi-threading
+  num_threads: 4
+
+# ==============================================================================
+# MLflow Experiment Tracking
+# ==============================================================================
+
+mlflow:
+  experiment_name: "project1_rag"
+  
+  # What to log
+  log_params: true
+  log_metrics: true
+  log_artifacts: true
+  log_models: false  # Models are large, disable by default
+  
+  # Auto-logging
+  autolog_sklearn: false
+  autolog_pytorch: true
+  autolog_transformers: true
+
+# ==============================================================================
+# Output & Visualization
+# ==============================================================================
+
+output:
+  # Save results
+  save_results: true
+  results_dir: "project1_rag/outputs"
+  
+  # Plots to generate
+  plots:
+    - "performance_vs_cost"
+    - "performance_vs_latency"
+    - "cost_vs_latency"
+    - "metric_comparison_bar"
+    - "metric_comparison_radar"
+    - "confusion_matrix"  # For classification-style metrics
+  
+  # Tables to generate
+  tables:
+    - "metric_summary"
+    - "model_comparison"
+    - "parameter_sweep_results"
+  
+  # Formats
+  plot_format: "png"  # png, pdf, svg
+  table_format: "csv"  # csv, xlsx, markdown
+
+
+
+

@@ -1,0 +1,57 @@
+# Environment & Secrets
+.env
+.env.local
+.env.*
+*.env
+secrets.yaml
+secrets.json
+api_keys.txt
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+venv/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Jupyter
+.ipynb_checkpoints/
+
+# ML Artifacts
+mlflow_tracking/
+mlruns/
+outputs/*
+!outputs/.gitkeep
+results/
+*.pt
+*.pth
+*.bin
+*.faiss
+.cache/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary
+*.tmp
+*.temp
+tmp/
+temp/
+

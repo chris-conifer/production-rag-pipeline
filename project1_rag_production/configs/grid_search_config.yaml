@@ -1,0 +1,147 @@
+# =============================================================================
+# Grid Search Configuration (YAML-Driven)
+# =============================================================================
+# This file controls the grid search experiments.
+# Edit 'baseline' values to change defaults.
+# Edit 'options' arrays to change what gets tested.
+# Only options DIFFERENT from baseline will be tested.
+# =============================================================================
+
+# Grid Search Settings
+grid_search:
+  strategy: "one_at_a_time"  # one_at_a_time = change one param per experiment
+  baseline_run_first: true   # Always run baseline first
+  max_experiments: 100       # Safety limit (can override with --max-experiments)
+
+# =============================================================================
+# PARAMETER DEFINITIONS
+# Each parameter has:
+#   - baseline: The default/starting value
+#   - options: List of values to test (only non-baseline values create experiments)
+# =============================================================================
+
+parameters:
+  # ---------------------------------------------------------------------------
+  # CHUNKING PARAMETERS
+  # ---------------------------------------------------------------------------
+  chunk_strategy:
+    baseline: "sentence"     # Best performer! (was fixed_size)
+    options:
+      - "fixed_size"
+      - "sentence"
+      - "semantic"
+      # - "paragraph"
+      # - "contextual"
+      # - "token_based"
+
+  chunk_size:
+    baseline: 512
+    options:
+      - 512
+      # - 256
+      # - 768
+
+  chunk_overlap:
+    baseline: 100
+    options:
+      - 100
+      # - 150
+      # - 200
+
+  # ---------------------------------------------------------------------------
+  # EMBEDDING PARAMETERS
+  # ---------------------------------------------------------------------------
+  embedding_model:
+    baseline: "sentence-transformers/all-MiniLM-L6-v2"
+    options:
+      - "sentence-transformers/all-MiniLM-L6-v2"
+      # - "sentence-transformers/all-mpnet-base-v2"
+      # - "BAAI/bge-small-en-v1.5"
+
+  # ---------------------------------------------------------------------------
+  # RETRIEVAL PARAMETERS
+  # ---------------------------------------------------------------------------
+  retrieval_type:
+    baseline: "hybrid"       # Best: Dense + BM25
+    options:
+      - "hybrid"
+      - "dense"              # Test dense-only as alternative
+
+  index_type:
+    baseline: "IndexFlatL2"
+    options:
+      - "IndexFlatL2"
+      # - "IndexFlatIP"
+      # - "IndexHNSWFlat"
+
+  top_k:
+    baseline: 10
+    options:
+      - 10
+      # - 5
+      # - 20
+
+  # Hybrid retrieval settings
+  fusion_strategy:
+    baseline: "rrf"
+    options:
+      - "rrf"
+
+  dense_weight:
+    baseline: 0.7
+    options:
+      - 0.7
+
+  sparse_weight:
+    baseline: 0.3
+    options:
+      - 0.3
+
+  # ---------------------------------------------------------------------------
+  # RERANKING PARAMETERS
+  # ---------------------------------------------------------------------------
+  reranker_type:
+    baseline: "bge"          # Best: BGE v2-m3
+    options:
+      - "bge"
+      - "cross_encoder"      # Test as faster alternative
+
+  top_n:
+    baseline: 3
+    options:
+      - 3
+      # - 5
+
+  # ---------------------------------------------------------------------------
+  # LLM GENERATION PARAMETERS
+  # ---------------------------------------------------------------------------
+  llm_model:
+    baseline: "google/flan-t5-base"
+    options:
+      - "google/flan-t5-base"
+      # - "google/flan-t5-large"
+
+  max_length:
+    baseline: 150
+    options:
+      - 150
+      # - 100
+      # - 200
+
+  temperature:
+    baseline: 0.7
+    options:
+      - 0.7
+
+  num_beams:
+    baseline: 4
+    options:
+      - 4
+
+# =============================================================================
+# SCORING WEIGHTS
+# =============================================================================
+composite_score:
+  accuracy_weight: 0.5    # Highest priority - correctness
+  latency_weight: 0.3     # Medium priority - speed
+  cost_weight: 0.2        # Lowest - all open-source = free

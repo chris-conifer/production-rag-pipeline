@@ -1,0 +1,171 @@
+# ==============================================================================
+# GenAI MonoRepo - Requirements
+# ==============================================================================
+# Production-ready RAG, Agentic AI, and Multi-Agent Systems
+# Optimized for NVIDIA GPU with CUDA 12.6 (RTX 3060 6GB tested)
+# Python 3.9 - 3.11 compatible
+
+# ==============================================================================
+# INSTALLATION INSTRUCTIONS (CRITICAL - READ FIRST!)
+# ==============================================================================
+# Step 1: Activate your virtual environment
+#   Windows PowerShell: .\venv\Scripts\Activate.ps1
+#   Windows CMD: .\venv\Scripts\activate.bat
+#   Linux/Mac: source venv/bin/activate
+#
+# Step 2: Install PyTorch with CUDA 12.4 support (compatible with CUDA 12.6)
+#   pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu124
+#
+# Step 3: Install remaining dependencies
+#   pip install -r requirements.txt
+#
+# Step 4: Verify installation
+#   python verify_cuda_setup.py
+#
+# NOTE: PyTorch 2.5.1 is required for compatibility with transformers 4.57.1
+#       Do NOT use PyTorch 2.6.0+ (has breaking API changes)
+# ==============================================================================
+
+# ==============================================================================
+# Core Deep Learning (INSTALL SEPARATELY - SEE ABOVE)
+# ==============================================================================
+# torch==2.5.1+cu124  # Install with --index-url (see above)
+# torchvision==0.20.1+cu124  # Install with --index-url (see above)
+# torchaudio==2.5.1+cu124  # Install with --index-url (see above)
+transformers>=4.35.0
+datasets>=2.14.0
+accelerate>=0.24.0
+safetensors>=0.4.0
+
+# ==============================================================================
+# Embeddings & Sentence Transformers
+# ==============================================================================
+sentence-transformers>=2.2.2
+InstructorEmbedding>=1.0.1
+
+# ==============================================================================
+# Vector Stores & Search
+# ==============================================================================
+# Using faiss-cpu (faiss-gpu not available on Windows via pip)
+# FAISS will use CPU but PyTorch models still use GPU
+faiss-cpu
+chromadb>=0.4.0
+# hnswlib>=0.7.0  # Commented out - requires Visual C++ Build Tools on Windows
+
+# ==============================================================================
+# LangChain Ecosystem
+# ==============================================================================
+langchain>=0.1.0
+langchain-community>=0.0.10
+langchain-huggingface>=0.0.1
+langgraph>=0.0.20
+langsmith>=0.0.70
+
+# ==============================================================================
+# Retrieval & Ranking
+# ==============================================================================
+rank-bm25>=0.2.2
+
+# ==============================================================================
+# Evaluation Frameworks
+# ==============================================================================
+ragas>=0.1.0
+deepeval>=0.20.0
+
+# ==============================================================================
+# Experiment Tracking & Monitoring
+# ==============================================================================
+mlflow>=2.9.0
+tensorboard>=2.15.0
+
+# ==============================================================================
+# UI & Visualization
+# ==============================================================================
+gradio>=4.0.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+plotly>=5.17.0
+
+# ==============================================================================
+# Data Processing
+# ==============================================================================
+numpy>=1.24.0,<2.0.0
+pandas>=2.0.0
+pyarrow>=14.0.0
+
+# ==============================================================================
+# Text Processing
+# ==============================================================================
+nltk>=3.8
+spacy>=3.7.0
+tiktoken>=0.5.0
+
+# ==============================================================================
+# Configuration & Environment
+# ==============================================================================
+python-dotenv>=1.0.0
+pyyaml>=6.0
+omegaconf>=2.3.0
+
+# ==============================================================================
+# Utilities
+# ==============================================================================
+tqdm>=4.65.0
+requests>=2.31.0
+tenacity>=8.2.0
+colorama>=0.4.6
+
+# ==============================================================================
+# Model Optimization
+# ==============================================================================
+bitsandbytes>=0.41.0  # For 4-bit/8-bit quantization
+optimum>=1.14.0
+onnx>=1.15.0
+onnxruntime>=1.16.0
+
+# ==============================================================================
+# Testing & Code Quality (optional)
+# ==============================================================================
+pytest>=7.4.0
+pytest-cov>=4.1.0
+black>=23.0.0
+ruff>=0.1.0
+
+# ==============================================================================
+# Additional Dependencies
+# ==============================================================================
+httpx>=0.25.0
+pydantic>=2.0.0
+typing-extensions>=4.8.0
+
+# ==============================================================================
+# Platform-specific notes:
+# ==============================================================================
+# CUDA 12.6 GPU Support (CONFIGURED):
+#   1. Install PyTorch with CUDA 12.x support (cu124 works with CUDA 12.6):
+#      pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+#   2. Install FAISS GPU version:
+#      pip install faiss-gpu
+#   3. Ensure CUDA 12.6 is properly installed on your system
+#   4. Verify GPU availability: python -c "import torch; print(torch.cuda.is_available())"
+#
+# For Apple Silicon (M1/M2):
+#   - torch should be installed with MPS support
+#   - Some packages may need different versions
+#   - Change device to "mps" in global_config.yaml
+#
+# For Windows with CUDA:
+#   - Install CUDA Toolkit 12.6 from NVIDIA (already installed on your system)
+#   - Install Visual C++ redistributables
+#   - Follow CUDA 12.x installation steps above
+#
+# Installation (CUDA 12.6):
+#   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+#   pip install faiss-cpu
+#   pip install -r requirements.txt
+#
+# For development:
+#   pip install -r requirements.txt
+#   python -m spacy download en_core_web_sm
+
+
