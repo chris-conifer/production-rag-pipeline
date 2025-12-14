@@ -324,7 +324,7 @@ The `shared_evaluation/` framework is **reusable across**:
 
 ---
 
-## 🎓 Technical Highlights for Hiring Managers
+## 🎓 Technical Highlights:
 
 ### Architecture Expertise
 - ✅ Clean OOP design with SOLID principles
@@ -372,9 +372,9 @@ The `shared_evaluation/` framework is **reusable across**:
 
 ## 📞 Contact
 
-**Author**: [Your Name]  
-**GitHub**: [github.com/YOUR_USERNAME](https://github.com/YOUR_USERNAME)  
-**LinkedIn**: [linkedin.com/in/YOUR_PROFILE](https://linkedin.com/in/YOUR_PROFILE)
+**Author**: Christian Dudziak  
+**GitHub**: [GitHub](https://github.com/chris-conifer)  
+**LinkedIn**: [LinkedIn](https://www.linkedin.com/in/christian-dudziak-b9193931/)  
 
 ---
 
